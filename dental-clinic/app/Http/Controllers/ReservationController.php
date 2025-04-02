@@ -11,7 +11,9 @@ class ReservationController extends Controller
      */
     public function index()
     {
-        //
+        $reservations = Reservation::all();
+        return view('reservations.index', compact('reservations'));
+
     }
 
     /**
@@ -19,7 +21,7 @@ class ReservationController extends Controller
      */
     public function create()
     {
-        //
+        return view('reservations.create');
     }
 
     /**
@@ -27,7 +29,20 @@ class ReservationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->valite([
+          'reservation_date' => 'required|date',
+          'reservation_time' => 'required',
+          'patient_name' => 'required|string|max:255',
+
+        ]);
+
+        Reservation::create([
+            'reservation_date' => $request->reservation_date,
+            'reservation_time' => $request->reservation_time,
+            'patient_name' => $request->patient_name,
+        ]);
+
+        return redirect()->route('reservations.index')->with('success', 'Reservation created successfully')
     }
 
     /**
@@ -41,17 +56,29 @@ class ReservationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Reservation $reservation)
     {
-        //
+        return view('reservations.edit', compact('$reservation'))
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Reservation $reservation)
     {
-        //
+        $request->valite([
+            'reservation_date' => 'required|date',
+            'reservation_time' => 'required',
+            'patient_name' => 'required|string|max:255',
+  
+          ]);
+  
+          Reservation::update([
+              'reservation_date' => $request->reservation_date,
+              'reservation_time' => $request->reservation_time,
+              'patient_name' => $request->patient_name,
+          ]);
+          return redirect()->route('reservations.index')->with('success', 'Reservation updated succesfully.')
     }
 
     /**
@@ -59,6 +86,7 @@ class ReservationController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $reservation->delete();
+        return redirect()->route('reservations.index')->with('success', 'Reservation deleted successfully')
     }
 }
